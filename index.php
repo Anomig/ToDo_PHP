@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $listController = new ListController($pdo);
-$taskController = new taskController($pdo);
+$taskController = new TaskController($pdo);
 $user_id = $_SESSION['user_id'];
 
 // Handle form submission for creating a new list
@@ -29,11 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['list_name'])) {
 
 // Fetch all lists for the logged-in user
 $lists = $listController->index($user_id);
+if (!is_array($lists)) {
+    $lists = [];
+}
 
 $list_id = isset($_GET['list_id']) ? intval($_GET['list_id']) : 0;
 
-// Fetch all tasks for the logged-in user
-$tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTasks();
+// Fetch tasks for the specific list or all tasks if no list ID is provided
+$tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskController->getAllTasks();
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +48,7 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
 </head>
 <body>
     <div class="container">
-        <h2>Welkom, <?php echo $_SESSION['username']; ?>!</h2>
+        <h2>Welkom, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
 
         <div class="tasks-container">
             <div class="tasks-column">
@@ -61,14 +64,14 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                 });
                 ?>
                 <?php foreach ($notDoneTasks as $task): ?>
-                    <div class="task-item" data-task-id="<?php echo $task['id']; ?>">
-                        <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="edit-button">✎</a>
+                    <div class="task-item" data-task-id="<?php echo htmlspecialchars($task['id']); ?>">
+                        <a href="edit_task.php?id=<?php echo htmlspecialchars($task['id']); ?>" class="edit-button">✎</a>
                         <span class="task-title"><?php echo htmlspecialchars($task['title']); ?></span>
                         <span class="task-deadline" data-original-date="<?php echo htmlspecialchars($task['deadline']); ?>">
                             <?php echo htmlspecialchars($task['deadline']); ?>
                         </span>
                         <form method="POST" action="delete_task.php" style="display:inline;">
-                            <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
+                            <input type="hidden" name="id" value="<?php echo htmlspecialchars($task['id']); ?>">
                             <button type="submit" class="delete-button">✖</button>
                         </form>
                     </div>
@@ -85,19 +88,38 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                     <div class="task-item done">
                         <div class="title"><?php echo htmlspecialchars($task['title']); ?></div>
                         <div class="date"><?php echo htmlspecialchars($task['deadline']); ?></div>
-                        
                     </div>
                 <?php endforeach; ?>
             </div>
 
             <div class="lists-column">
                 <h2 class="header">Lijsten</h2>
-                <?php foreach ($lists as $list): ?>
-                    <div class="list-item">
-                        <?php echo htmlspecialchars($list['name']); ?>
-                        <a href="delete_list.php?id=<?php echo $list['id']; ?>" class="delete-button" titel="verwijder">✖</a>
-                    </div>
-                <?php endforeach; ?>
+                <?php if (!empty($lists)): ?>
+                    <?php foreach ($lists as $list): ?>
+                        <div class="list-item-container">
+                            <div class="list-header">
+                            <strong class="list-item-title"><?php echo htmlspecialchars($list['name']); ?></strong>
+                            <a href="delete_list.php?id=<?php echo htmlspecialchars($list['id']); ?>" class="delete-button" title="verwijder">✖</a>
+                            </div>
+                            <?php
+                            // Fetch tasks associated with the current list
+                            $listTasks = $taskController->getTasksByListId($list['id']);
+                            if (!empty($listTasks)): ?>
+                                <ul class="task-list">
+                                    <?php foreach ($listTasks as $task): ?>
+                                        <li class="task-list-item">
+                                            <a href="edit_task.php?id=<?php echo htmlspecialchars($task['id']); ?>">
+                                                <?php echo htmlspecialchars($task['title']); ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Geen lijsten gevonden.</p>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -119,36 +141,34 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                     </select>
 
                     <label for="list_id">Selecteer Lijst:</label>
-                        <select id="list_id" name="list_id" required>
-                        <?php
-                        // Fetch all lists
-                            $lists = $listController->index($user_id);
-                            foreach ($lists as $list) {
-                            echo '<option value="' . htmlspecialchars($list['id']) . '">' . htmlspecialchars($list['name']) . '</option>';
-                            }
-                        ?>
-                        </select>
+                    <select id="list_id" name="list_id" required>
+                        <?php foreach ($lists as $list): ?>
+                            <option value="<?php echo htmlspecialchars($list['id']); ?>">
+                                <?php echo htmlspecialchars($list['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
             
                     <label for="task_comment">Opmerking:</label>
                     <textarea id="task_comment" name="task_comment"></textarea>
 
                     <button type="submit" class="add-button">Voeg toe</button>
                 </form>
+            </div>
+
+            <div class="form-group">
+                <h3>Nieuwe Lijst Toevoegen</h3>
+                <form method="POST" action="add_list.php">
+                    <label for="list_name">Nieuwe Lijstnaam:</label>
+                    <input type="text" id="list_name" name="list_name" required>
+                    <button type="submit" class="add-button">Voeg Toe</button>
+                </form>
+            </div>
         </div>
 
-        <div class="form-group">
-            <h3>Nieuwe Lijst Toevoegen</h3>
-            <form method="POST" action="add_list.php">
-                <label for="list_name">Nieuwe Lijstnaam:</label>
-                <input type="text" id="list_name" name="list_name" required>
-                <button type="submit" class="add-button">Voeg Toe</button>
-            </form>
+        <div class="logout-container">
+            <a href="logout.php" class="logout-button">Uitloggen</a>
         </div>
-    </div>
-
-    <div class="logout-container">
-        <a href="logout.php" class="logout-button">Uitloggen</a>
-    </div>
     </div>
 
     <script>
@@ -158,63 +178,57 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
         taskItems.forEach(item => {
             const taskId = item.dataset.taskId; // Zorg ervoor dat je de taak-ID toevoegt aan de data-attributen
 
-        fetch(`remaining_days.php?id=${taskId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.error);
-                    return;
-                }
+            fetch(`remaining_days.php?id=${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
 
-                const deadlineElement = item.querySelector('.task-deadline');
-                const remainingDays = data.remaining_days;
+                    const deadlineElement = item.querySelector('.task-deadline');
+                    const remainingDays = data.remaining_days;
 
-                if (remainingDays < 0) {
-                    deadlineElement.textContent = `${-remainingDays} dagen verstreken`;
-                } else if (remainingDays < 7) {
-                    deadlineElement.textContent = `${remainingDays} dagen resterend`;
-                } else {
-                    deadlineElement.textContent = deadlineElement.dataset.originalDate; // Houd de originele datum bij
-                }
-            });
+                    if (remainingDays < 0) {
+                        deadlineElement.textContent = `${-remainingDays} dagen verstreken`;
+                    } else if (remainingDays < 7) {
+                        deadlineElement.textContent = `${remainingDays} dagen resterend`;
+                    } else {
+                        deadlineElement.textContent = deadlineElement.dataset.originalDate; // Houd de originele datum bij
+                    }
+                });
         });
-    });
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.delete-button');
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const form = this.closest('form');
+                const taskId = form.querySelector('input[name="id"]').value;
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const form = this.closest('form');
-            const taskId = form.querySelector('input[name="id"]').value;
-
-            fetch('delete_task.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    'id': taskId
+                fetch('delete_task.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'id': taskId
+                    })
                 })
-            })
-            .then(response => response.text())
-            .then(message => {
-                if (message.includes('Taak verwijderd')) {
-                    // Verwijder het taak-item uit de DOM
-                    form.closest('.task-item').remove();
-                } else {
-                    console.error(message);
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+                .then(response => response.text())
+                .then(message => {
+                    if (message.includes('Taak verwijderd')) {
+                        // Verwijder het taak-item uit de DOM
+                        form.closest('.task-item').remove();
+                    } else {
+                        console.error(message);
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
             });
         });
     });
-});
     </script>
-
 </body>
 </html>
-
