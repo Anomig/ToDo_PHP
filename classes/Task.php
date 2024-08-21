@@ -92,8 +92,9 @@ class Task {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function updateTask($id, $title, $deadline, $status, $comment) {
-        $stmt = $this->pdo->prepare('UPDATE tasks SET title = ?, deadline = ?, status = ?, comment = ? WHERE id = ?');
-        return $stmt->execute([$title, $deadline, $status, $comment, $id]);
+    public function updateTask($id, $list_id, $title, $deadline, $status, $comment) {
+        $stmt = $this->pdo->prepare('UPDATE tasks SET list_id = ?, title = ?, deadline = ?, status = ?, comment = ? WHERE id = ?');
+        return $stmt->execute([$list_id, $title, $deadline, $status, $comment, $id]);
     }
+    
 }

@@ -24,8 +24,8 @@ class taskController {
         return $this->task->getTaskById($id);
     }
 
-    public function updateTask($id, $title, $deadline, $status, $comment) {
-        return $this->task->updateTask($id, $title, $deadline, $status, $comment);
+    public function updateTask($id, $list_id, $title, $deadline, $status, $comment) {
+        return $this->task->updateTask($id, $list_id, $title, $deadline, $status, $comment);
     }
 
     public function delete($id) {

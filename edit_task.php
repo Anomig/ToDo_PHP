@@ -1,7 +1,13 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 require_once 'db/db.php';
 require_once 'classes/TaskController.php';
+require_once 'classes/ListController.php'; // Voeg dit toe om de lijsten op te halen
 
 // Controleer of de gebruiker is ingelogd
 if (!isset($_SESSION['user_id'])) {
@@ -9,8 +15,11 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Initialiseer de taskController
+// Initialiseer de taskController en listController
 $taskController = new TaskController($pdo);
+$listController = new ListController($pdo); // Initialiseer dit om lijsten op te halen
+
+$user_id = $_SESSION['user_id']; // Verkrijg user_id
 
 // Verkrijg het taak-ID vanuit de URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -30,13 +39,14 @@ if (!$task) {
 
 // Verwerk het formulier voor taakupdate
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $list_id = $_POST['list_id']; // Verkrijg list_id
     $title = $_POST['task_title'];
     $deadline = $_POST['task_deadline'];
     $status = $_POST['task_status'];
     $comment = $_POST['task_comment'];
 
     // Update de taak
-    $taskController->updateTask($task_id, $title, $deadline, $status, $comment);
+    $taskController->updateTask($task_id, $list_id, $title, $deadline, $status, $comment);
 
     header('Location: index.php');
     exit();
@@ -66,6 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="done" <?php echo ($task['status'] === 'done') ? 'selected' : ''; ?>>Voltooid</option>
         </select>
         
+        <label for="list_id">Selecteer Lijst:</label>
+        <select id="list_id" name="list_id" required>
+            <?php
+            // Fetch all lists
+            $lists = $listController->index($user_id);
+            foreach ($lists as $list) {
+                $selected = ($task['list_id'] == $list['id']) ? 'selected' : '';
+                echo '<option value="' . htmlspecialchars($list['id']) . '" ' . $selected . '>' . htmlspecialchars($list['name']) . '</option>';
+            }
+            ?>
+        </select> 
+
         <label for="task_comment">Opmerking:</label>
         <textarea id="task_comment" name="task_comment"><?php echo htmlspecialchars($task['comment']); ?></textarea>
 

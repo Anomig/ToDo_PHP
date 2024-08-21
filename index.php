@@ -117,6 +117,17 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                         <option value="pending">In behandeling</option>
                         <option value="done">Voltooid</option>
                     </select>
+
+                    <label for="list_id">Selecteer Lijst:</label>
+                        <select id="list_id" name="list_id" required>
+                        <?php
+                        // Fetch all lists
+                            $lists = $listController->index($user_id);
+                            foreach ($lists as $list) {
+                            echo '<option value="' . htmlspecialchars($list['id']) . '">' . htmlspecialchars($list['name']) . '</option>';
+                            }
+                        ?>
+                        </select>
             
                     <label for="task_comment">Opmerking:</label>
                     <textarea id="task_comment" name="task_comment"></textarea>
