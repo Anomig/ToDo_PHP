@@ -62,9 +62,10 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                 ?>
                 <?php foreach ($notDoneTasks as $task): ?>
                     <div class="task-item <?php echo htmlspecialchars($task['status']); ?>">
+                        <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="edit-button">✎</a>
                         <div class="title"><?php echo htmlspecialchars($task['title']); ?></div>
                         <div class="date"><?php echo htmlspecialchars($task['deadline']); ?></div>
-                        
+                        <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="delete-button">✖</a>
                     </div>
                 <?php endforeach; ?>
 
@@ -89,6 +90,7 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                 <?php foreach ($lists as $list): ?>
                     <div class="list-item">
                         <?php echo htmlspecialchars($list['name']); ?>
+                        <a href="delete_list.php?id=<?php echo $list['id']; ?>" class="delete-button" titel="verwijder">✖</a>
                     </div>
                 <?php endforeach; ?>
             </div>

@@ -85,4 +85,15 @@ class Task {
         $stmt = $this->pdo->prepare('DELETE FROM lists WHERE id = ?');
         return $stmt->execute([$id]);
     }
+
+    public function getTaskById($id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM tasks WHERE id = ?');
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateTask($id, $title, $deadline, $status, $comment) {
+        $stmt = $this->pdo->prepare('UPDATE tasks SET title = ?, deadline = ?, status = ?, comment = ? WHERE id = ?');
+        return $stmt->execute([$title, $deadline, $status, $comment, $id]);
+    }
 }

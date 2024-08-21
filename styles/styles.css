@@ -77,6 +77,11 @@ form input, form select, form textarea, form button {
     color: #856404; 
 }
 
+.task-deadline{
+    margin-right: 20px;
+    width: 120px;
+}
+
 .title {
     font-weight: bold;
 }
@@ -131,3 +136,37 @@ form input, form select, form textarea, form button {
 .logout-button:hover {
     background-color: #c82333;
 }
+
+.delete-button {
+    color: red;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 10px; 
+    font-size: 18px; 
+}
+
+.delete-button:hover {
+    color: darkred; 
+}
+
+.list-item {
+    display: flex;
+    align-items: center; 
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.edit-button {
+    color: #007bff; 
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.edit-button:hover {
+    color: #0056b3; 
+}
+
+
