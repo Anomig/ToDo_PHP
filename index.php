@@ -61,10 +61,12 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                 });
                 ?>
                 <?php foreach ($notDoneTasks as $task): ?>
-                    <div class="task-item <?php echo htmlspecialchars($task['status']); ?>">
+                    <div class="task-item" data-task-id="<?php echo $task['id']; ?>">
                         <a href="edit_task.php?id=<?php echo $task['id']; ?>" class="edit-button">✎</a>
-                        <div class="title"><?php echo htmlspecialchars($task['title']); ?></div>
-                        <div class="date"><?php echo htmlspecialchars($task['deadline']); ?></div>
+                        <span class="task-title"><?php echo htmlspecialchars($task['title']); ?></span>
+                        <span class="task-deadline" data-original-date="<?php echo htmlspecialchars($task['deadline']); ?>">
+                            <?php echo htmlspecialchars($task['deadline']); ?>
+                        </span>
                         <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="delete-button">✖</a>
                     </div>
                 <?php endforeach; ?>
@@ -120,91 +122,51 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                 </form>
         </div>
 
-    <div class="form-group">
-        <h3>Nieuwe Lijst Toevoegen</h3>
-        <form method="POST" action="add_list.php">
-            <label for="list_name">Nieuwe Lijstnaam:</label>
-            <input type="text" id="list_name" name="list_name" required>
-            <button type="submit" class="add-button">Voeg Toe</button>
-        </form>
-    </div>
-</div>
-
-
-        <div class="logout-container">
-            <a href="logout.php" class="logout-button">Uitloggen</a>
+        <div class="form-group">
+            <h3>Nieuwe Lijst Toevoegen</h3>
+            <form method="POST" action="add_list.php">
+                <label for="list_name">Nieuwe Lijstnaam:</label>
+                <input type="text" id="list_name" name="list_name" required>
+                <button type="submit" class="add-button">Voeg Toe</button>
+            </form>
         </div>
     </div>
+
+    <div class="logout-container">
+        <a href="logout.php" class="logout-button">Uitloggen</a>
+    </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskItems = document.querySelectorAll('.task-item');
+
+        taskItems.forEach(item => {
+            const taskId = item.dataset.taskId; // Zorg ervoor dat je de taak-ID toevoegt aan de data-attributen
+
+        fetch(`remaining_days.php?id=${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    return;
+                }
+
+                const deadlineElement = item.querySelector('.task-deadline');
+                const remainingDays = data.remaining_days;
+
+                if (remainingDays < 0) {
+                    deadlineElement.textContent = `${-remainingDays} dagen verstreken`;
+                } else if (remainingDays < 7) {
+                    deadlineElement.textContent = `${remainingDays} dagen resterend`;
+                } else {
+                    deadlineElement.textContent = deadlineElement.dataset.originalDate; // Houd de originele datum bij
+                }
+            });
+        });
+    });
+    </script>
+
 </body>
 </html>
 
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-</head>
-<body>
-    <h2>Welkom, <?php echo $_SESSION['username']; ?>!</h2>
-
-    <h3>Jouw Lijsten</h3>
-    <ul>
-        <?php foreach ($lists as $list): ?>
-            <li><?php echo htmlspecialchars($list['name']); ?> 
-                <a href="delete_list.php?id=<?php echo $list['id']; ?>">Verwijder</a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-    <h3>Nieuwe Lijst Toevoegen</h3>
-    <form method="POST" action="">
-        <label for="list_name">Lijstnaam:</label>
-        <input type="text" id="list_name" name="list_name" required>
-        <button type="submit">Voeg toe</button>
-    </form>
-
-    <h3>Jouw Taken</h3>
-    <ul>
-        <?php foreach ($tasks as $task): ?>
-            <li><?php echo htmlspecialchars($task['title']); ?> 
-                <a href="delete_task.php?id=<?php echo $task['id']; ?>">Verwijder</a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-    <h3>Nieuwe Taak Toevoegen</h3>
-    <form method="POST" action="add_task.php">
-        <label for="task_title">Taaknaam:</label>
-        <input type="text" id="task_title" name="task_title" required>
-    
-        <label for="task_deadline">Deadline:</label>
-        <input type="date" id="task_deadline" name="task_deadline">
-    
-        <label for="task_status">Status:</label>
-        <select id="task_status" name="task_status" required>
-            <option value="todo">Te doen</option>
-            <option value="pending">In behandeling</option>
-            <option value="done">Voltooid</option>
-        </select>
-    
-        <label for="task_comment">Opmerking:</label>
-        <textarea id="task_comment" name="task_comment"></textarea>
-    
-        <label for="list_name">Selecteer Lijst:</label>
-            <select id="list_name" name="list_name">
-                <option value="">Geen lijst</option>
-                <?php foreach ($lists as $list): ?>
-                    <option value="<?php echo htmlspecialchars($list['id']); ?>">
-                <?php echo htmlspecialchars($list['name']); ?>
-                </option>
-                <?php endforeach; ?>
-            </select>
-    
-        <button type="submit">Voeg toe</button>
-    </form>
-
-
-    <a href="logout.php">Uitloggen</a>
-</body>
-</html> -->
