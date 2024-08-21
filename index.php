@@ -88,8 +88,15 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
         <label for="task_comment">Opmerking:</label>
         <textarea id="task_comment" name="task_comment"></textarea>
     
-        <label for="list_id">Lijst ID (optioneel):</label>
-        <input type="number" id="list_id" name="list_id" min="0" placeholder="Laat leeg voor geen lijst">
+        <label for="list_name">Selecteer Lijst:</label>
+            <select id="list_name" name="list_name">
+                <option value="">Geen lijst</option>
+                <?php foreach ($lists as $list): ?>
+                    <option value="<?php echo htmlspecialchars($list['id']); ?>">
+                <?php echo htmlspecialchars($list['name']); ?>
+                </option>
+                <?php endforeach; ?>
+            </select>
     
         <button type="submit">Voeg toe</button>
     </form>
