@@ -77,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
         
         <label for="list_id">Selecteer Lijst:</label>
-        <select id="list_id" name="list_id" required>
+        <select id="list_id" name="list_id">
+            <option value="">Geen lijst</option>
             <?php
             // Fetch all lists
             $lists = $listController->index($user_id);

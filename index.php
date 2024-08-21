@@ -141,7 +141,8 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                     </select>
 
                     <label for="list_id">Selecteer Lijst:</label>
-                    <select id="list_id" name="list_id" required>
+                    <select id="list_id" name="list_id">
+                        <option value="">Geen lijst</option>
                         <?php foreach ($lists as $list): ?>
                             <option value="<?php echo htmlspecialchars($list['id']); ?>">
                                 <?php echo htmlspecialchars($list['name']); ?>
