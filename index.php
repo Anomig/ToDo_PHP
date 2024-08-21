@@ -67,7 +67,10 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
                         <span class="task-deadline" data-original-date="<?php echo htmlspecialchars($task['deadline']); ?>">
                             <?php echo htmlspecialchars($task['deadline']); ?>
                         </span>
-                        <a href="delete_task.php?id=<?php echo $task['id']; ?>" class="delete-button">✖</a>
+                        <form method="POST" action="delete_task.php" style="display:inline;">
+                            <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
+                            <button type="submit" class="delete-button">✖</button>
+                        </form>
                     </div>
                 <?php endforeach; ?>
 
@@ -165,6 +168,40 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
             });
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-button');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const form = this.closest('form');
+            const taskId = form.querySelector('input[name="id"]').value;
+
+            fetch('delete_task.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'id': taskId
+                })
+            })
+            .then(response => response.text())
+            .then(message => {
+                if (message.includes('Taak verwijderd')) {
+                    // Verwijder het taak-item uit de DOM
+                    form.closest('.task-item').remove();
+                } else {
+                    console.error(message);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        });
+    });
+});
     </script>
 
 </body>

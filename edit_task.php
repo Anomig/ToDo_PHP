@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Taak Bewerken</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
     <h2>Bewerk Taak</h2>
@@ -72,6 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="add-button">Bijwerken</button>
     </form>
     
-    <a href="index.php">Terug naar overzicht</a>
+    <a href="index.php" class="add-button">Terug naar overzicht</a>
 </body>
 </html>

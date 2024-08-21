@@ -138,15 +138,31 @@ form input, form select, form textarea, form button {
 }
 
 .delete-button {
-    color: red;
-    font-weight: bold;
+    background: none;
+    border: none;
+    color: red; 
+    cursor: pointer; 
+    font-size: 16px; 
+    padding: 0; 
+    margin: 0; 
+    text-align: center;
     text-decoration: none;
-    margin-left: 10px; 
-    font-size: 18px; 
 }
 
 .delete-button:hover {
     color: darkred; 
+}
+
+form .delete-button {
+    background: none;
+    border: none;
+    color: red; 
+    cursor: pointer; 
+    font-size: 16px; 
+    padding: 0; 
+    margin: 0; 
+    text-align: center;
+    text-decoration: none;
 }
 
 .list-item {
