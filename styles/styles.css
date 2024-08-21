@@ -12,7 +12,14 @@ body {
 }
 
 .form-container {
-    margin-bottom: 20px;
+    display: flex; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+}
+
+.form-group {
+    flex: 1; 
+    min-width: 300px; 
 }
 
 form {
@@ -31,20 +38,6 @@ form label {
 
 form input, form select, form textarea, form button {
     margin-bottom: 10px;
-}
-
-form button {
-    align-self: flex-start;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-form button:hover {
-    background-color: #0056b3;
 }
 
 .tasks-container, .lists-container {
@@ -104,6 +97,20 @@ form button:hover {
     padding: 5px;
     background-color: #e9e9e9;
     border-radius: 5px;
+}
+
+.add-button {
+    align-self: flex-start;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
 }
 
 .logout-container {

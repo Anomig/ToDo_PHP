@@ -95,37 +95,39 @@ $tasks = $list_id ? $taskController->index($list_id) : $taskController->getAllTa
         </div>
 
         <div class="form-container">
-            <h3>Nieuwe Taak Toevoegen</h3>
-            <form method="POST" action="add_task.php">
-                <label for="task_title">Taaknaam:</label>
-                <input type="text" id="task_title" name="task_title" required>
-                
-                <label for="task_deadline">Deadline:</label>
-                <input type="date" id="task_deadline" name="task_deadline">
-                
-                <label for="task_status">Status:</label>
-                <select id="task_status" name="task_status" required>
-                    <option value="todo">Te doen</option>
-                    <option value="pending">In behandeling</option>
-                    <option value="done">Voltooid</option>
-                </select>
-                
-                <label for="task_comment">Opmerking:</label>
-                <textarea id="task_comment" name="task_comment"></textarea>
-                
-                <label for="list_name">Selecteer Lijst:</label>
-                <select id="list_name" name="list_name">
-                    <option value="">Geen lijst</option>
-                    <?php foreach ($lists as $list): ?>
-                        <option value="<?php echo htmlspecialchars($list['id']); ?>">
-                            <?php echo htmlspecialchars($list['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                
-                <button type="submit">Voeg toe</button>
-            </form>
+            <div class="form-group">
+                <h3>Nieuwe Taak Toevoegen</h3>
+                <form method="POST" action="add_task.php">
+                    <label for="task_title">Taaknaam:</label>
+                    <input type="text" id="task_title" name="task_title" required>
+            
+                    <label for="task_deadline">Deadline:</label>
+                    <input type="date" id="task_deadline" name="task_deadline">
+            
+                    <label for="task_status">Status:</label>
+                    <select id="task_status" name="task_status" required>
+                        <option value="todo">Te doen</option>
+                        <option value="pending">In behandeling</option>
+                        <option value="done">Voltooid</option>
+                    </select>
+            
+                    <label for="task_comment">Opmerking:</label>
+                    <textarea id="task_comment" name="task_comment"></textarea>
+
+                    <button type="submit" class="add-button">Voeg toe</button>
+                </form>
         </div>
+
+    <div class="form-group">
+        <h3>Nieuwe Lijst Toevoegen</h3>
+        <form method="POST" action="add_list.php">
+            <label for="list_name">Nieuwe Lijstnaam:</label>
+            <input type="text" id="list_name" name="list_name" required>
+            <button type="submit" class="add-button">Voeg Toe</button>
+        </form>
+    </div>
+</div>
+
 
         <div class="logout-container">
             <a href="logout.php" class="logout-button">Uitloggen</a>
