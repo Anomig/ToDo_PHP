@@ -96,5 +96,10 @@ class Task {
         $stmt = $this->pdo->prepare('UPDATE tasks SET list_id = ?, title = ?, deadline = ?, status = ?, comment = ? WHERE id = ?');
         return $stmt->execute([$list_id, $title, $deadline, $status, $comment, $id]);
     }
+
+    public function updateTaskStatus($id, $status) {
+        $stmt = $this->pdo->prepare('UPDATE tasks SET status = ? WHERE id = ?');
+        return $stmt->execute([$status, $id]);
+    }
     
 }

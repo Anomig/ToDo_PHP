@@ -66,6 +66,8 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                 <?php foreach ($notDoneTasks as $task): ?>
                     <div class="task-item" data-task-id="<?php echo htmlspecialchars($task['id']); ?>">
                         <a href="edit_task.php?id=<?php echo htmlspecialchars($task['id']); ?>" class="edit-button">✎</a>
+                        <button class="status-toggle" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="done">Done</button>
+                        <button class="status-toggle" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="todo">Busy</button>
                         <span class="task-title"><?php echo htmlspecialchars($task['title']); ?></span>
                         <span class="task-deadline" data-original-date="<?php echo htmlspecialchars($task['deadline']); ?>">
                             <?php echo htmlspecialchars($task['deadline']); ?>
@@ -173,6 +175,7 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
     </div>
 
     <script>
+        //code voor remaining deadline
     document.addEventListener('DOMContentLoaded', function() {
         const taskItems = document.querySelectorAll('.task-item');
 
@@ -230,6 +233,27 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
             });
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Voeg een event listener toe aan alle status-knoppen
+    document.querySelectorAll('.status-toggle').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var taskId = this.dataset.taskId;
+            var newStatus = this.dataset.newStatus;
+
+            // AJAX-request om de status te updaten
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'update_task_status.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    location.reload(); // Pagina opnieuw laden om de wijzigingen te tonen
+                }
+            };
+            xhr.send('id=' + taskId + '&status=' + newStatus);
+        });
+    });
+});
     </script>
 </body>
 </html>

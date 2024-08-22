@@ -33,6 +33,10 @@ class TaskController {
         return $this->task->updateTask($id, $list_id, $title, $deadline, $status, $comment);
     }
 
+    public function updateTaskStatus($id, $status) {
+        return $this->task->updateTaskStatus($id, $status);
+    }
+
     // Verwijder een taak
     public function delete($id) {
         return $this->task->deleteTasks($id);
