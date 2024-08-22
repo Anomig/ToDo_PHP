@@ -66,8 +66,8 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                 <?php foreach ($notDoneTasks as $task): ?>
                     <div class="task-item" data-task-id="<?php echo htmlspecialchars($task['id']); ?>">
                         <a href="edit_task.php?id=<?php echo htmlspecialchars($task['id']); ?>" class="edit-button">✎</a>
-                        <button class="status-toggle" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="done">Done</button>
-                        <button class="status-toggle" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="todo">Busy</button>
+                        <button class="status-toggle done" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="done">Done</button>
+                        <button class="status-toggle busy" data-task-id="<?php echo htmlspecialchars($task['id']); ?>" data-new-status="pending">Busy</button>
                         <span class="task-title"><?php echo htmlspecialchars($task['title']); ?></span>
                         <span class="task-deadline" data-original-date="<?php echo htmlspecialchars($task['deadline']); ?>">
                             <?php echo htmlspecialchars($task['deadline']); ?>
@@ -256,6 +256,7 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
         });
     });
 });
+
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.comment-form').forEach(function(form) {

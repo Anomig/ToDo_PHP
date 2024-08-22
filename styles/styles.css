@@ -223,4 +223,19 @@ form .delete-button {
     width: 120px; 
 }
 
+.status-toggle {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+
+.status-toggle:hover {
+    opacity: 0.8;
+}
+
 
