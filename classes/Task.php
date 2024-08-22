@@ -69,10 +69,21 @@ class Task {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    // Controleer of een taak met dezelfde naam al bestaat in de lijst
+    public function taskExistsInList($list_id, $task_title) {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM tasks WHERE list_id = ? AND title = ?');
+        $stmt->execute([$list_id, $task_title]);
+        return $stmt->fetchColumn() > 0;
+    }
     // Create a new task
-    public function createTask($list_id, $title, $deadline, $status, $comment) {
+    public function createTask($list_id, $task_title, $deadline, $status, $comment) {
+        if ($this->taskExistsInList($list_id, $task_title)) {
+            throw new Exception('Er bestaat al een taak met dezelfde naam in deze lijst.');
+        }
+        
         $stmt = $this->pdo->prepare('INSERT INTO tasks (list_id, title, deadline, status, comment) VALUES (?, ?, ?, ?, ?)');
-        return $stmt->execute([$list_id, $title, $deadline, $status, $comment]);
+        return $stmt->execute([$list_id, $task_title, $deadline, $status, $comment]);
     }
 
     public function getAllTasks() {
@@ -101,6 +112,8 @@ class Task {
         $stmt = $this->pdo->prepare('UPDATE tasks SET status = ? WHERE id = ?');
         return $stmt->execute([$status, $id]);
     }
+
+    
     
     
 }

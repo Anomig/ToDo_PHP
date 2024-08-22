@@ -5,7 +5,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+// Controleer of de sessie al is gestart
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
 require_once 'db/db.php';
 require_once 'classes/ListController.php';
 require_once 'classes/TaskController.php';
@@ -155,10 +160,15 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
             
                     <label for="task_comment">Opmerking:</label>
                     <textarea id="task_comment" name="task_comment"></textarea>
-                    <label for="task_comment">Opmerking:</label>
-                    <textarea id="task_comment" name="task_comment"></textarea>
 
-                    <button type="submit" class="add-button">Voeg toe</button>
+                    <div style="display: flex; align-items: center;">
+            <button type="submit" class="add-button">Voeg toe</button>
+            <?php if (isset($error_message) && !empty($error_message)): ?>
+                <div class="error-message" style="color:red; margin-left: 10px;">
+                    <?php echo htmlspecialchars($error_message); ?>
+                </div>
+            <?php endif; ?>
+        </div>
                 </form>
             </div>
 

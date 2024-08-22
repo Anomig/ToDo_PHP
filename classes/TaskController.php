@@ -10,7 +10,12 @@ class TaskController {
 
     // Maak een taak aan
     public function create($list_id, $title, $deadline, $status, $comment) {
-        return $this->task->createTask($list_id, $title, $deadline, $status, $comment);
+        try {
+            return $this->task->createTask($list_id, $title, $deadline, $status, $comment);
+        } catch (Exception $e) {
+            // Retourneer de foutboodschap
+            return $e->getMessage();
+        }
     }
 
     // Haal alle taken op voor een specifieke lijst
