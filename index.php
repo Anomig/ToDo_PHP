@@ -152,10 +152,8 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                         <?php endforeach; ?>
                     </select>
             
-                    <form class="comment-form" data-task-id="<?php echo htmlspecialchars($task['id']); ?>">
-    <textarea name="comment" required></textarea>
-    <button type="submit">Voeg commentaar toe</button>
-</form>
+                    <label for="task_comment">Opmerking:</label>
+                    <textarea id="task_comment" name="task_comment"></textarea>
 
                     <button type="submit" class="add-button">Voeg toe</button>
                 </form>
@@ -256,29 +254,6 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
         });
     });
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.comment-form').forEach(function(form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Voorkom de standaard submit-actie
-
-            var taskId = this.dataset.taskId;
-            var comment = this.querySelector('textarea[name="comment"]').value;
-
-            // AJAX-request om het commentaar toe te voegen
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'add_comment.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    location.reload(); // Pagina opnieuw laden om de wijzigingen te tonen
-                }
-            };
-            xhr.send('id=' + taskId + '&comment=' + encodeURIComponent(comment));
-        });
-    });
-});
-
     </script>
 </body>
 </html>
