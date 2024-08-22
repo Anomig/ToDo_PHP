@@ -1,6 +1,6 @@
 <?php
 
-//error detectie
+// Error detectie
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -17,11 +17,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $listController = new ListController($pdo);
 
-// Controleer of een lijst-ID is opgegeven in de URL
-if (isset($_GET['id'])) {
-    $list_id = $_GET['id'];
-    $listController->delete($list_id);
+// Controleer of een lijst-ID is opgegeven in de POST-gegevens
+if (isset($_POST['id'])) {
+    $list_id = intval($_POST['id']);
+    if ($listController->delete($list_id)) {
+        echo 'Lijst verwijderd'; // Dit kan door de JavaScript worden gecontroleerd
+    } else {
+        echo 'Fout bij verwijderen'; // Foutmelding voor debugging
+    }
+} else {
+    echo 'Geen lijst-ID opgegeven';
 }
-
-header('Location: index.php');
-exit();

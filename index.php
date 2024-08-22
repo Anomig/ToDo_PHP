@@ -90,6 +90,7 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                     <div class="task-item done">
                         <div class="title"><?php echo htmlspecialchars($task['title']); ?></div>
                         <div class="date"><?php echo htmlspecialchars($task['deadline']); ?></div>
+                        <button class="delete-task-button" data-task-id="<?php echo htmlspecialchars($task['id']); ?>">✖</button>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -101,7 +102,7 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
                         <div class="list-item-container">
                             <div class="list-header">
                             <strong class="list-item-title"><?php echo htmlspecialchars($list['name']); ?></strong>
-                            <a href="delete_list.php?id=<?php echo htmlspecialchars($list['id']); ?>" class="delete-button" title="verwijder">✖</a>
+                            <a href="#" class="delete-button" data-list-id="<?php echo htmlspecialchars($list['id']); ?>" title="verwijder">✖</a>
                             </div>
                             <?php
                             // Fetch tasks associated with the current list
@@ -235,6 +236,40 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+    // Event listener voor delete-knoppen
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const listId = this.getAttribute('data-list-id');
+            
+            fetch('delete_list.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'id': listId
+                })
+            })
+            .then(response => response.text())
+            .then(message => {
+                if (message.includes('Lijst verwijderd')) {
+                    // Verwijder de lijst uit de DOM
+                    this.closest('.list-item-container').remove();
+                } else {
+                    console.error(message);
+                }
+            })
+            .catch(error => {
+                console.error('Er was een probleem met de fetch-operatie:', error);
+            });
+        });
+    });
+});
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
     // Voeg een event listener toe aan alle status-knoppen
     document.querySelectorAll('.status-toggle').forEach(function(button) {
         button.addEventListener('click', function() {
@@ -254,6 +289,38 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-task-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const taskId = this.getAttribute('data-task-id');
+            
+            fetch('delete_task.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'id': taskId
+                })
+            })
+            .then(response => response.text())
+            .then(message => {
+                if (message.includes('Taak verwijderd')) {
+                    // Verwijder de taak uit de DOM
+                    this.closest('.task-item').remove();
+                } else {
+                    console.error(message); // Toon foutmelding in de console
+                }
+            })
+            .catch(error => {
+                console.error('Er was een probleem met de fetch-operatie:', error);
+            });
+        });
+    });
+});
+
 
     </script>
 </body>
