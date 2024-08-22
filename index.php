@@ -155,6 +155,8 @@ $tasks = $list_id ? $taskController->getTasksByListId($list_id) : $taskControlle
             
                     <label for="task_comment">Opmerking:</label>
                     <textarea id="task_comment" name="task_comment"></textarea>
+                    <label for="task_comment">Opmerking:</label>
+                    <textarea id="task_comment" name="task_comment"></textarea>
 
                     <button type="submit" class="add-button">Voeg toe</button>
                 </form>
